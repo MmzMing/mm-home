@@ -1,0 +1,12 @@
+{
+  "wallpaper": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1920&q=80",
+  "overlayColor": "rgba(0, 0, 0, 0.3)",
+  "glassEffect": {
+    "borderRadius": 36,
+    "brightness": 50,
+    "saturation": 1.8,
+    "blur": 12,
+    "backgroundOpacity": 0.15,
+    "distortionScale": -180
+  }
+}

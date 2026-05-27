@@ -1,0 +1,72 @@
+[
+  {
+    "id": "github",
+    "name": "GitHub",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg",
+    "link": "https://github.com",
+    "color": "#24292e"
+  },
+  {
+    "id": "blog",
+    "name": "Blog",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/markdown/markdown-original.svg",
+    "link": "/blog",
+    "color": "#6366f1"
+  },
+  {
+    "id": "notes",
+    "name": "Notes",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/notion/notion-original.svg",
+    "link": "/notes",
+    "color": "#000000"
+  },
+  {
+    "id": "calendar",
+    "name": "Calendar",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg",
+    "link": "https://calendar.google.com",
+    "color": "#4285f4"
+  },
+  {
+    "id": "music",
+    "name": "Music",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spotify/spotify-original.svg",
+    "link": "https://open.spotify.com",
+    "color": "#1db954"
+  },
+  {
+    "id": "photos",
+    "name": "Photos",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg",
+    "link": "https://photos.google.com",
+    "color": "#fbbc05"
+  },
+  {
+    "id": "mail",
+    "name": "Mail",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg",
+    "link": "https://mail.google.com",
+    "color": "#ea4335"
+  },
+  {
+    "id": "code",
+    "name": "VS Code",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg",
+    "link": "https://vscode.dev",
+    "color": "#007acc"
+  },
+  {
+    "id": "figma",
+    "name": "Figma",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
+    "link": "https://figma.com",
+    "color": "#f24e1e"
+  },
+  {
+    "id": "twitter",
+    "name": "Twitter",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/twitter/twitter-original.svg",
+    "link": "https://twitter.com",
+    "color": "#1da1f2"
+  }
+]
