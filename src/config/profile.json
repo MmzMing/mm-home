@@ -1,0 +1,10 @@
+{
+  "avatar": "https://i.stardots.io/784774835/StarDots-2026052116374135506.jpg",
+  "name": "MmMing",
+  "bio": "前端开发 / 设计爱好者",
+  "location": "Shenzhen, China",
+  "links": [
+    { "label": "GitHub", "url": "https://github.com" },
+    { "label": "Blog", "url": "https://blog.example.com" }
+  ]
+}

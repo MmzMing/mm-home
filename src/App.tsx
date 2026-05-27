@@ -347,7 +347,16 @@ function App() {
       style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif" }}
     >
       {/* Wallpaper */}
-      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${settings.wallpaper})`, zIndex: 0 }} />
+      <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
+        <div
+          className="absolute bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url(${settings.wallpaper})`,
+            filter: settings.backgroundBlur > 0 ? `blur(${settings.backgroundBlur}px)` : undefined,
+            inset: settings.backgroundBlur > 0 ? `-${settings.backgroundBlur * 2}px` : '0',
+          }}
+        />
+      </div>
       {/* Overlay */}
       <div className="absolute inset-0" style={{ background: `rgba(0, 0, 0, ${settings.overlayOpacity})`, zIndex: 3 }} />
       {/* Status bar with pull-down panel */}
@@ -365,7 +374,7 @@ function App() {
           <div
             ref={gridContainerRef}
             className="relative mx-auto"
-            style={{ width: cols * cellSize, height: maxRow * cellSize, maxWidth: '100%' }}
+            style={{ width: cols * (cellSize + gap) - gap, height: maxRow * (cellSize + gap) - gap, maxWidth: '100%' }}
           >
             {freeApps.map((app) => {
               const pos = positions[app.id]
@@ -376,6 +385,7 @@ function App() {
                   app={app}
                   position={pos}
                   cellSize={cellSize}
+                  gap={gap}
                   showLabel={settings.showLabels}
                   containerLeft={containerPos.left}
                   containerTop={containerPos.top}
@@ -392,6 +402,7 @@ function App() {
                 group={group}
                 apps={apps}
                 cellSize={cellSize}
+                gap={gap}
                 showLabel={settings.showLabels}
                 containerLeft={containerPos.left}
                 containerTop={containerPos.top}
@@ -405,7 +416,7 @@ function App() {
               {dragTarget && positions[dragTarget] && !fusion.isActive && (
                 <motion.div
                   className="absolute rounded-full border-2 border-blue-400/50 bg-blue-400/10"
-                  style={{ left: positions[dragTarget].col * cellSize - 4, top: positions[dragTarget].row * cellSize - 4, width: cellSize + 8, height: cellSize + 8 }}
+                  style={{ left: positions[dragTarget].col * (cellSize + gap) - 4, top: positions[dragTarget].row * (cellSize + gap) - 4, width: cellSize + 8, height: cellSize + 8 }}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}

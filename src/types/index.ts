@@ -72,6 +72,7 @@ export interface AppState {
   settings: {
     showLabels: boolean
     overlayOpacity: number
+    backgroundBlur: number
     wallpaper: string
   }
   dragState: {

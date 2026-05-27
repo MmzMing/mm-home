@@ -11,6 +11,7 @@ interface FolderPopupProps {
   group: FusionGroupType | null
   apps: AppConfig[]
   cellSize: number
+  gap: number
   containerLeft: number
   containerTop: number
   cols: number
@@ -24,6 +25,7 @@ interface FolderPopupProps {
 const FolderIcon: React.FC<{
   app: AppConfig
   cellSize: number
+  gap: number
   containerLeft: number
   containerTop: number
   cols: number
@@ -32,20 +34,19 @@ const FolderIcon: React.FC<{
   onDragEnd?: (id: string, pos: { x: number; y: number }) => void
   onDragOut?: (appId: string, dropPosition: GridPosition) => void
   onNavigate?: (link: string) => void
-}> = React.memo(({ app, cellSize, containerLeft, containerTop, cols, onDragStart, onDragMove, onDragEnd, onDragOut, onNavigate }) => {
+}> = React.memo(({ app, cellSize, gap, containerLeft, containerTop, cols, onDragStart, onDragMove, onDragEnd, onDragOut, onNavigate }) => {
 
   const handleDragEnd = useCallback(
     (appId: string, point: { x: number; y: number }) => {
       onDragEnd?.(appId, point)
-      // Convert page coordinates to grid position
       const relX = point.x - containerLeft
       const relY = point.y - containerTop
       const clampedX = Math.max(cellSize / 2, Math.min(relX, window.innerWidth - containerLeft - cellSize / 2))
       const clampedY = Math.max(cellSize / 2, Math.min(relY, window.innerHeight - containerTop - cellSize / 2))
-      const gridPos = pixelToGrid(clampedX, clampedY, cellSize, cols)
+      const gridPos = pixelToGrid(clampedX, clampedY, cellSize, gap, cols)
       onDragOut?.(appId, gridPos)
     },
-    [onDragEnd, onDragOut, containerLeft, containerTop, cellSize, cols]
+    [onDragEnd, onDragOut, containerLeft, containerTop, cellSize, gap, cols]
   )
 
   const handleClick = useCallback(
@@ -96,6 +97,7 @@ const FolderPopup: React.FC<FolderPopupProps> = ({
   group,
   apps,
   cellSize,
+  gap,
   containerLeft,
   containerTop,
   cols,
@@ -202,6 +204,7 @@ const FolderPopup: React.FC<FolderPopupProps> = ({
                       key={app.id}
                       app={app}
                       cellSize={cellSize}
+                      gap={gap}
                       containerLeft={containerLeft}
                       containerTop={containerTop}
                       cols={cols}

@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'motion/react'
+import profile from '../config/profile.json'
+import notifications from '../config/notifications.json'
 
 const BAR_H = 32
-const PANEL_H = 460
+const PANEL_H = 560
 const DRAG_THRESHOLD = 8
 const OPEN_DRAG_THRESHOLD = 60
 
@@ -126,13 +128,8 @@ export default function StatusBar() {
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
       >
-        {/* Left: Apple logo + app name */}
-        <div className="flex items-center gap-2">
-          <svg width="14" height="16" viewBox="0 0 14 17" fill="rgba(0,0,0,0.8)">
-            <path d="M13.1 12.1c-.3.6-.6 1.2-1 1.7-.6.8-1.1 1.3-1.6 1.6-.7.4-1.4.7-2.2.7-.6 0-1.2-.2-2-.5-.8-.3-1.5-.5-2.1-.5-.6 0-1.3.2-2.1.5-.8.3-1.4.5-1.8.5-.8 0-1.5-.3-2.2-.7C.9 14.8.5 14.3.2 13.6c-.4-.8-.7-1.7-.9-2.8-.2-1.2-.3-2.3-.3-3.3 0-1.2.3-2.2.8-3 .4-.7 1-1.3 1.7-1.7.7-.4 1.5-.6 2.3-.6.7 0 1.4.2 2.2.6.8.4 1.3.6 1.5.6.2 0 .7-.2 1.6-.6.9-.4 1.6-.6 2.3-.6 1.6 0 2.9.6 3.8 1.7-1.5.9-2.3 2.2-2.2 3.8 0 1.3.5 2.3 1.4 3.2.4.4.9.7 1.4.9-.1.3-.2.6-.4.9zM10 .3c0 1-.4 2-1.1 2.8-.8 1-1.8 1.6-2.9 1.5 0-.1 0-.2 0-.3 0-1 .4-2 1.2-2.8.4-.4.8-.7 1.4-1 .6-.3 1.1-.4 1.5-.4 0 .1 0 .2 0 .3z" />
-          </svg>
-          <span className="text-[13px] font-semibold text-black/80 tracking-tight">Workspace</span>
-        </div>
+        {/* Left: empty spacer for layout balance */}
+        <div />
 
         {/* Right: status icons + date + time */}
         <div className="flex items-center gap-3">
@@ -183,40 +180,47 @@ export default function StatusBar() {
         >
           <div className="w-full h-full overflow-y-auto" style={{ padding: '20px 14px 16px' }}>
             <div className="flex flex-col gap-2.5">
-              <div className="px-1 pb-1 text-[13px] font-semibold text-black/50 tracking-tight">通知中心</div>
-
-              <div style={cardStyle}>
-                <div className="text-[13px] text-black/60">暂无新通知</div>
-              </div>
-
-              <div className="flex gap-2.5">
-                {['Wi-Fi', '蓝牙', '飞行模式'].map((t) => (
-                  <div key={t} className="flex-1" style={{ ...cardStyle, padding: '14px 0', textAlign: 'center' }}>
-                    <span className="text-[12px] font-medium text-black/70">{t}</span>
+              {/* Blogger profile card */}
+              <div style={{ ...cardStyle, padding: '36px 24px' }}>
+                <div className="flex items-center gap-6">
+                  <img
+                    src={profile.avatar}
+                    alt={profile.name}
+                    className="rounded-full flex-shrink-0"
+                    style={{ width: 120, height: 120, border: '3px solid rgba(255,255,255,0.4)' }}
+                  />
+                  <div className="flex flex-col gap-2 min-w-0">
+                    <span className="text-[20px] font-semibold text-black/85 leading-tight">{profile.name}</span>
+                    <span className="text-[14px] text-black/50 leading-snug">{profile.bio}</span>
+                    <span className="text-[13px] text-black/35 leading-snug">{profile.location}</span>
+                    <div className="flex gap-3 mt-2">
+                      {profile.links.map((link) => (
+                        <a
+                          key={link.label}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[12px] text-blue-500/80 hover:text-blue-500 transition-colors"
+                        >
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
                   </div>
-                ))}
-              </div>
-              <div className="flex gap-2.5">
-                {['手电筒', '计算器', '相机'].map((t) => (
-                  <div key={t} className="flex-1" style={{ ...cardStyle, padding: '14px 0', textAlign: 'center' }}>
-                    <span className="text-[12px] font-medium text-black/70">{t}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div style={cardStyle}>
-                <div className="text-[12px] text-black/45 mb-2.5">亮度</div>
-                <div className="h-[7px] rounded-full bg-black/8">
-                  <div className="h-full rounded-full bg-black/40" style={{ width: '75%' }} />
                 </div>
               </div>
 
-              <div style={cardStyle}>
-                <div className="text-[12px] text-black/45 mb-2.5">音量</div>
-                <div className="h-[7px] rounded-full bg-black/8">
-                  <div className="h-full rounded-full bg-black/40" style={{ width: '50%' }} />
+              {/* Notifications from config */}
+              <div className="px-1 pb-1 text-[13px] font-semibold text-black/50 tracking-tight">通知</div>
+              {notifications.map((n) => (
+                <div key={n.id} style={cardStyle}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[13px] font-medium text-black/75">{n.title}</span>
+                    <span className="text-[11px] text-black/30 flex-shrink-0 ml-2">{n.time}</span>
+                  </div>
+                  <div className="text-[12px] text-black/50 leading-relaxed">{n.body}</div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>

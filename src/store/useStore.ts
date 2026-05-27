@@ -35,6 +35,7 @@ const initialState: AppState = {
   settings: {
     showLabels: true,
     overlayOpacity: defaults.overlay.opacity,
+    backgroundBlur: 0,
     wallpaper: defaults.wallpaper,
   },
   dragState: {

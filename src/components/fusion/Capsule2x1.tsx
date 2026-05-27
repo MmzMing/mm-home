@@ -11,6 +11,7 @@ interface Capsule2x1Props {
   group: FusionGroupType
   apps: AppConfig[]
   cellSize: number
+  gap: number
   showLabel: boolean
   containerLeft: number
   containerTop: number
@@ -25,6 +26,7 @@ const Capsule2x1: React.FC<Capsule2x1Props> = ({
   group,
   apps,
   cellSize,
+  gap,
   showLabel,
   containerLeft,
   containerTop,
@@ -40,8 +42,9 @@ const Capsule2x1: React.FC<Capsule2x1Props> = ({
     [group.appIds, apps]
   )
 
-  const gx = group.position.col * cellSize
-  const gy = group.position.row * cellSize
+  const stride = cellSize + gap
+  const gx = group.position.col * stride
+  const gy = group.position.row * stride
   const width = cellSize - 8
   const height = cellSize * 1.6
 
@@ -51,11 +54,11 @@ const Capsule2x1: React.FC<Capsule2x1Props> = ({
       const relY = point.y - containerTop - cellSize / 2
       const clampedX = Math.max(cellSize / 2, Math.min(relX, window.innerWidth - containerLeft - cellSize / 2))
       const clampedY = Math.max(cellSize / 2, Math.min(relY, window.innerHeight - containerTop - cellSize / 2))
-      const gridPos = pixelToGrid(clampedX, clampedY, cellSize, cols)
+      const gridPos = pixelToGrid(clampedX, clampedY, cellSize, gap, cols)
       moveGroup(group.id, gridPos)
       onDragEnd?.(_id, point)
     },
-    [containerLeft, containerTop, cellSize, cols, group.id, moveGroup, onDragEnd]
+    [containerLeft, containerTop, cellSize, gap, cols, group.id, moveGroup, onDragEnd]
   )
 
   const { ref, x, y, isDragging, handlers } = useDrag({

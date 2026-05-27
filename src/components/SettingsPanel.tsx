@@ -132,6 +132,29 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose, anchorX 
 
                 <div className="h-px bg-black/8" />
 
+                {/* Background Blur */}
+                <div className="py-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-black/85">Background Blur</span>
+                      <span className="text-xs text-black/45">Wallpaper blur intensity</span>
+                    </div>
+                    <span className="text-xs text-black/50 tabular-nums flex-shrink-0">{settings.backgroundBlur}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="20"
+                    value={settings.backgroundBlur}
+                    onChange={(e) =>
+                      updateSettings({ backgroundBlur: Number(e.target.value) })
+                    }
+                    className="w-full h-1 bg-black/10 rounded-full appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow [&::-webkit-slider-thumb]:cursor-pointer"
+                  />
+                </div>
+
+                <div className="h-px bg-black/8" />
+
                 {/* Wallpaper */}
                 <div className="py-2">
                   <span className="text-sm font-medium text-black/85 block mb-3">Wallpaper</span>

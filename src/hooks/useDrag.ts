@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react'
+import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react'
 import { useMotionValue, type MotionValue } from 'motion/react'
 import { clampElastic, computeBounds, offsetToPage } from '../utils/drag'
 
@@ -7,6 +7,7 @@ interface DragOptions {
   gridX: number
   gridY: number
   cellSize: number
+  gap?: number
   containerLeft: number
   containerTop: number
   /** Enable throw physics on release. Default: false (for fusion groups). */
@@ -225,13 +226,26 @@ export function useDrag(options: DragOptions): DragResult {
     }
   }, [x, y, startThrow])
 
-  // Reset when grid position changes externally
-  useEffect(() => {
-    if (!isDraggingRef.current && !throwRaf.current) {
+  // Keep motion values in sync when grid position changes.
+  // Compensate for the delta so the element doesn't visually jump,
+  // then reset to 0 in the next render (when the new gridX/gridY are applied).
+  const prevGridRef = useRef({ gridX, gridY })
+  useLayoutEffect(() => {
+    if (isDraggingRef.current || throwRaf.current) {
+      prevGridRef.current = { gridX, gridY }
+      return
+    }
+    const dx = gridX - prevGridRef.current.gridX
+    const dy = gridY - prevGridRef.current.gridY
+    prevGridRef.current = { gridX, gridY }
+    if (dx !== 0 || dy !== 0) {
+      x.set(x.get() - dx)
+      y.set(y.get() - dy)
+    } else {
       x.set(0)
       y.set(0)
     }
-  }, [gridX, gridY, x, y])
+  }, [gridX, gridY])
 
   // Cleanup on unmount
   useEffect(() => () => stopThrow(), [stopThrow])

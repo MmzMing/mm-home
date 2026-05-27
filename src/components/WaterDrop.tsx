@@ -9,6 +9,7 @@ interface WaterDropProps {
   app: AppConfig
   position: GridPosition
   cellSize: number
+  gap: number
   showLabel: boolean
   containerLeft: number
   containerTop: number
@@ -23,6 +24,7 @@ const WaterDrop: React.FC<WaterDropProps> = ({
   app,
   position,
   cellSize,
+  gap,
   showLabel,
   containerLeft,
   containerTop,
@@ -34,8 +36,9 @@ const WaterDrop: React.FC<WaterDropProps> = ({
 }) => {
   const radius = cellSize / 2
   const iconSize = Math.round(cellSize * 0.44)
-  const gridX = position.col * cellSize
-  const gridY = position.row * cellSize
+  const stride = cellSize + gap
+  const gridX = position.col * stride
+  const gridY = position.row * stride
 
   const { ref, x, y, isDragging: dragging, handlers } = useDrag({
     id: app.id,

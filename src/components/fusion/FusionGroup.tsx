@@ -9,6 +9,7 @@ interface FusionGroupProps {
   group: FusionGroupType
   apps: AppConfig[]
   cellSize: number
+  gap: number
   showLabel: boolean
   containerLeft: number
   containerTop: number
@@ -22,6 +23,7 @@ const FusionGroup: React.FC<FusionGroupProps> = ({
   group,
   apps,
   cellSize,
+  gap,
   showLabel,
   containerLeft,
   containerTop,
@@ -44,7 +46,6 @@ const FusionGroup: React.FC<FusionGroupProps> = ({
     setFolderOpen(false)
   }, [])
 
-  // Determine which shape to render
   const shape = group.shape
   const appCount = groupApps.length
 
@@ -52,6 +53,7 @@ const FusionGroup: React.FC<FusionGroupProps> = ({
     group,
     apps,
     cellSize,
+    gap,
     showLabel,
     containerLeft,
     containerTop,
@@ -61,22 +63,24 @@ const FusionGroup: React.FC<FusionGroupProps> = ({
     onClick: handleClick,
   }
 
-  // For 2-app groups, use the specified capsule orientation
+  const popupProps = {
+    group: folderOpen ? group : null,
+    apps,
+    cellSize,
+    gap,
+    containerLeft,
+    containerTop,
+    cols,
+    onClose: handleCloseFolder,
+    onDragStart,
+    onDragEnd,
+  }
+
   if (appCount === 2 && shape === 'capsule') {
     return (
       <>
         <Capsule1x2 {...commonProps} />
-        <FolderPopup
-          group={folderOpen ? group : null}
-          apps={apps}
-          cellSize={cellSize}
-          containerLeft={containerLeft}
-          containerTop={containerTop}
-          cols={cols}
-          onClose={handleCloseFolder}
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-        />
+        <FolderPopup {...popupProps} />
       </>
     )
   }
@@ -85,36 +89,15 @@ const FusionGroup: React.FC<FusionGroupProps> = ({
     return (
       <>
         <Capsule2x1 {...commonProps} />
-        <FolderPopup
-          group={folderOpen ? group : null}
-          apps={apps}
-          cellSize={cellSize}
-          containerLeft={containerLeft}
-          containerTop={containerTop}
-          cols={cols}
-          onClose={handleCloseFolder}
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-        />
+        <FolderPopup {...popupProps} />
       </>
     )
   }
 
-  // 3+ apps -> 2x2 card
   return (
     <>
       <Card2x2 {...commonProps} />
-      <FolderPopup
-        group={folderOpen ? group : null}
-        apps={apps}
-        cellSize={cellSize}
-        containerLeft={containerLeft}
-        containerTop={containerTop}
-        cols={cols}
-        onClose={handleCloseFolder}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-      />
+      <FolderPopup {...popupProps} />
     </>
   )
 }

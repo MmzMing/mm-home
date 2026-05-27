@@ -30,8 +30,6 @@ yarn.lock
 *.iml
 .claude
 
-# docs
-Firefly-docs/
 
 cache/
 package/
