@@ -15,6 +15,7 @@ interface FusionGroupProps {
   containerTop: number
   cols: number
   onDragStart?: (id: string) => void
+  onDragMove?: (id: string, pos: { x: number; y: number }) => void
   onDragEnd?: (id: string, pos: { x: number; y: number }) => void
 }
 
@@ -29,6 +30,7 @@ const FusionGroup: React.FC<FusionGroupProps> = ({
   containerTop,
   cols,
   onDragStart,
+  onDragMove,
   onDragEnd,
 }) => {
   const [folderOpen, setFolderOpen] = useState(false)
@@ -59,6 +61,7 @@ const FusionGroup: React.FC<FusionGroupProps> = ({
     containerTop,
     cols,
     onDragStart,
+    onDragMove,
     onDragEnd,
     onClick: handleClick,
   }

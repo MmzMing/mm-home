@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react'
-import { useMotionValue, type MotionValue } from 'motion/react'
+import { useMotionValue, animate, type MotionValue } from 'motion/react'
 import { clampElastic, computeBounds, offsetToPage } from '../utils/drag'
+import defaults from '../config/defaults.json'
 
 interface DragOptions {
   id: string
@@ -30,10 +31,11 @@ const CLICK_THRESHOLD = 5
 const FRICTION = 0.95
 const BOUNCE_RATIO = 0.3
 const STOP_THRESHOLD = 0.5
+const SNAP_VEL_THRESHOLD = 3
 
 export function useDrag(options: DragOptions): DragResult {
   const {
-    id, gridX, gridY, cellSize, containerLeft, containerTop,
+    id, gridX, gridY, cellSize, gap, containerLeft, containerTop,
     enableThrow = false,
     onDragStart, onDragMove, onDragEnd, onClick,
   } = options
@@ -48,13 +50,14 @@ export function useDrag(options: DragOptions): DragResult {
   const [dragging, setDragging] = useState(false)
   const rawSamples = useRef<{ x: number; y: number; t: number }[]>([])
   const throwRaf = useRef(0)
+  const snapControls = useRef<ReturnType<typeof animate> | null>(null)
 
   const bounds = computeBounds(containerLeft, containerTop, gridX, gridY, cellSize)
   const boundsRef = useRef(bounds)
   boundsRef.current = bounds
 
-  const optsRef = useRef({ containerLeft, containerTop, gridX, gridY, cellSize })
-  optsRef.current = { containerLeft, containerTop, gridX, gridY, cellSize }
+  const optsRef = useRef({ containerLeft, containerTop, gridX, gridY, cellSize, gap })
+  optsRef.current = { containerLeft, containerTop, gridX, gridY, cellSize, gap }
 
   const onDragEndRef = useRef(onDragEnd)
   onDragEndRef.current = onDragEnd
@@ -72,10 +75,53 @@ export function useDrag(options: DragOptions): DragResult {
       cancelAnimationFrame(throwRaf.current)
       throwRaf.current = 0
     }
+    if (snapControls.current) {
+      snapControls.current.stop()
+      snapControls.current = null
+    }
   }, [])
 
   const startThrow = useCallback((vx: number, vy: number) => {
     stopThrow()
+
+    const startSnap = () => {
+      const opts = optsRef.current
+      const stride = opts.cellSize + (opts.gap ?? 16)
+      const curX = x.get()
+      const curY = y.get()
+      const targetX = Math.round(curX / stride) * stride
+      const targetY = Math.round(curY / stride) * stride
+
+      const springCfg = {
+        stiffness: defaults.animation.snapStiffness,
+        damping: defaults.animation.snapDamping,
+        mass: defaults.animation.snapMass,
+      }
+
+      let completed = 0
+      const onComplete = () => {
+        completed++
+        if (completed < 2) return
+        snapControls.current = null
+        const pagePoint = offsetToPage(
+          targetX, targetY,
+          opts.containerLeft, opts.containerTop,
+          opts.gridX, opts.gridY, opts.cellSize,
+        )
+        onDragEndRef.current?.(idRef.current, pagePoint)
+      }
+
+      snapControls.current = animate(x, targetX, {
+        type: 'spring',
+        ...springCfg,
+        onComplete,
+      })
+      animate(y, targetY, {
+        type: 'spring',
+        ...springCfg,
+        onComplete,
+      })
+    }
 
     const tick = () => {
       vx *= FRICTION
@@ -93,7 +139,14 @@ export function useDrag(options: DragOptions): DragResult {
       x.set(nx)
       y.set(ny)
 
-      if (Math.abs(vx) + Math.abs(vy) < STOP_THRESHOLD) {
+      const totalVel = Math.abs(vx) + Math.abs(vy)
+      if (totalVel < SNAP_VEL_THRESHOLD) {
+        throwRaf.current = 0
+        startSnap()
+        return
+      }
+
+      if (totalVel < STOP_THRESHOLD) {
         throwRaf.current = 0
         const opts = optsRef.current
         const pagePoint = offsetToPage(
@@ -197,14 +250,8 @@ export function useDrag(options: DragOptions): DragResult {
           }
           startThrow(vx, vy)
         } else {
-          // No velocity data, just snap
-          const opts = optsRef.current
-          const pagePoint = offsetToPage(
-            x.get(), y.get(),
-            opts.containerLeft, opts.containerTop,
-            opts.gridX, opts.gridY, opts.cellSize,
-          )
-          onDragEndRef.current?.(idRef.current, pagePoint)
+          // No velocity data, snap with zero initial velocity
+          startThrow(0, 0)
         }
       } else {
         // No throw: pass final position directly
@@ -231,7 +278,7 @@ export function useDrag(options: DragOptions): DragResult {
   // then reset to 0 in the next render (when the new gridX/gridY are applied).
   const prevGridRef = useRef({ gridX, gridY })
   useLayoutEffect(() => {
-    if (isDraggingRef.current || throwRaf.current) {
+    if (isDraggingRef.current || throwRaf.current || snapControls.current) {
       prevGridRef.current = { gridX, gridY }
       return
     }

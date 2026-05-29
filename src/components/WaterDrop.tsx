@@ -45,6 +45,7 @@ const WaterDrop: React.FC<WaterDropProps> = ({
     gridX,
     gridY,
     cellSize,
+    gap,
     containerLeft,
     containerTop,
     enableThrow: true,

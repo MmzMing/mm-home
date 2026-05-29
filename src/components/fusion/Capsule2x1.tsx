@@ -17,6 +17,7 @@ interface Capsule2x1Props {
   containerTop: number
   cols: number
   onDragStart?: (id: string) => void
+  onDragMove?: (id: string, pos: { x: number; y: number }) => void
   onDragEnd?: (id: string, pos: { x: number; y: number }) => void
   onClick?: () => void
 }
@@ -32,6 +33,7 @@ const Capsule2x1: React.FC<Capsule2x1Props> = ({
   containerTop,
   cols,
   onDragStart,
+  onDragMove,
   onDragEnd,
   onClick,
 }) => {
@@ -66,9 +68,12 @@ const Capsule2x1: React.FC<Capsule2x1Props> = ({
     gridX: gx,
     gridY: gy,
     cellSize: height,
+    gap,
     containerLeft,
     containerTop,
+    enableThrow: true,
     onDragStart,
+    onDragMove,
     onDragEnd: handleDragEnd,
     onClick: onClick ? () => onClick() : undefined,
   })

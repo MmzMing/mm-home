@@ -408,6 +408,7 @@ function App() {
                 containerTop={containerPos.top}
                 cols={cols}
                 onDragStart={handleDragStart}
+                onDragMove={handleDragMove}
                 onDragEnd={handleDragEnd}
               />
             ))}
